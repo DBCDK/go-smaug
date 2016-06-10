@@ -8,9 +8,16 @@ import (
 
 func main() {
 	smaugUrl := url.URL{Scheme: "https", Host: "platform-i01.dbc.dk:3001"}
-	smaug.Authenticate(smaugUrl, "qwerty")
+	token := "qwerty"
+	smaug.Authenticate(smaugUrl, &token)
 
-	token, err := smaug.TokenFromRequest(&http.Request{URL: &smaugUrl})
-	println(token)
-	println(err)
+	urlWithToken, _ := url.Parse("https://localhost/?access_token=abc")
+
+	token2, err := smaug.TokenFromRequest(&http.Request{URL: urlWithToken})
+
+	if err != nil {
+		println(err.Error())
+	} else {
+		println(*token2)
+	}
 }

@@ -8,14 +8,19 @@ import (
 	"errors"
 )
 
-func TokenFromRequest(request *http.Request) (string, (error)) {
+func TokenFromRequest(request *http.Request) (*string, error) {
 	access_token := request.URL.Query().Get("access_token")
-	return access_token, nil
+
+	if len(access_token) == 0 {
+		return nil, errors.New("no access token")
+	}
+
+	return &access_token, nil
 }
 
-func Authenticate(u url.URL, token string) (*Identity, error) {
+func Authenticate(u url.URL, token *string) (*Identity, error) {
 	q := make(url.Values)
-	q.Add("token", token)
+	q.Add("token", *token)
 
 	u.Path = "/configuration"
 	u.RawQuery = q.Encode()
