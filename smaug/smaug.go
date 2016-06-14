@@ -9,13 +9,17 @@ import (
 )
 
 func TokenFromRequest(request *http.Request) (*string, error) {
-	access_token := request.URL.Query().Get("access_token")
-
-	if len(access_token) == 0 {
-		return nil, errors.New("no access token")
+	token_from_cookie, err := request.Cookie("access_token")
+	if err == nil && token_from_cookie != nil {
+		return &token_from_cookie.Value, nil
 	}
 
-	return &access_token, nil
+	token_from_query := request.URL.Query().Get("access_token")
+	if len(token_from_query) > 0 {
+		return &token_from_query, nil
+	}
+
+	return nil, errors.New("no access token")
 }
 
 func Authenticate(u url.URL, token *string) (*Identity, error) {

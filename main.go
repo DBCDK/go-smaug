@@ -11,9 +11,11 @@ func main() {
 	token := "qwerty"
 	smaug.Authenticate(smaugUrl, &token)
 
-	urlWithToken, _ := url.Parse("https://localhost/?access_token=abc")
+	cookie := http.Cookie{Name: "access_token", Value: "qwerty"}
+	request, err := http.NewRequest("GET", "https://localhost/?access_token=abc", nil)
+	request.AddCookie(&cookie)
 
-	token2, err := smaug.TokenFromRequest(&http.Request{URL: urlWithToken})
+	token2, err := smaug.TokenFromRequest(request)
 
 	if err != nil {
 		println(err.Error())
